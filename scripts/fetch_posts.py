@@ -17,6 +17,7 @@ agent running the skill - this script only does deterministic fetching.
 import argparse
 import html
 import json
+import re
 import sys
 import time
 import urllib.parse
@@ -142,6 +143,72 @@ def fetch_reddit(query, subreddits, limit):
         data = _get(f"https://www.reddit.com/search.json?{params}")
         if data and "data" in data:
             out.extend(_parse_reddit_children(data["data"].get("children", [])))
+    if not out:
+        out = fetch_reddit_scrapling(query, subreddits, limit)
+    return out
+
+
+def fetch_reddit_scrapling(query, subreddits, limit):
+    try:
+        from scrapling import DynamicFetcher
+    except Exception as e:  # noqa: BLE001
+        sys.stderr.write(f"scrapling unavailable for reddit fallback: {e}\n")
+        return []
+
+    targets = subreddits or [None]
+    out = []
+    for sub in targets:
+        if sub:
+            url = (
+                f"https://old.reddit.com/r/{urllib.parse.quote(sub)}/search?"
+                f"q={urllib.parse.quote_plus(query)}&restrict_sr=on&sort=new&t=year"
+            )
+        else:
+            url = (
+                "https://old.reddit.com/search?"
+                f"q={urllib.parse.quote_plus(query)}&sort=new&t=year"
+            )
+        try:
+            page = DynamicFetcher.fetch(
+                url, headless=True, timeout=60000, wait_until="domcontentloaded"
+            )
+        except Exception as e:  # noqa: BLE001
+            sys.stderr.write(f"scrapling reddit fallback failed for {url}: {e}\n")
+            continue
+
+        for result in page.css("div.search-result-link")[:limit]:
+            title = clean(result.css("a.search-title::text").get())
+            href = clean(result.css("a.search-title::attr(href)").get())
+            if not title or not href:
+                continue
+            if href.startswith("/"):
+                href = f"https://old.reddit.com{href}"
+            match = re.search(r"/comments/([^/]+)/", href)
+            external_id = match.group(1) if match else href
+            subreddit = clean(result.css("a.search-subreddit-link::text").get())
+            subreddit = subreddit.replace("r/", "") or sub
+            comments = clean(result.css("a.search-comments::text").get())
+            comment_count = int(re.sub(r"\D", "", comments) or 0)
+            body = " ".join(
+                clean(t).strip()
+                for t in result.css(".search-result-body ::text").getall()
+                if clean(t).strip()
+            )
+            out.append(
+                {
+                    "externalId": external_id,
+                    "platform": "Reddit",
+                    "title": title,
+                    "body": body,
+                    "url": href.replace("old.reddit.com", "reddit.com"),
+                    "author": clean(result.css("a.author::text").get()) or None,
+                    "subreddit": subreddit,
+                    "score": 0,
+                    "numComments": comment_count,
+                    "createdAt": clean(result.css("time::attr(datetime)").get()),
+                }
+            )
+        time.sleep(0.5)
     return out
 
 

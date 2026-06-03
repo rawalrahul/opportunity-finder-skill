@@ -189,7 +189,7 @@ def main():
     ap.add_argument("--out", default="", help="output file (default stdout)")
     args = ap.parse_args()
 
-    raw = open(args.infile, encoding="utf-8").read() if args.infile else sys.stdin.read()
+    raw = open(args.infile, encoding="utf-8-sig").read() if args.infile else sys.stdin.read()
     data = json.loads(raw)
     posts = data.get("posts", [])
     opps = data.get("opportunities", [])
