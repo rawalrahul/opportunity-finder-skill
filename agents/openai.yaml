@@ -1,0 +1,4 @@
+interface:
+  display_name: "Opportunity Finder"
+  short_description: "Find and rank market pain points"
+  default_prompt: "Use $opportunity-finder to discover and rank product opportunities from Reddit and Hacker News for this topic."
