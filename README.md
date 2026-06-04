@@ -1,6 +1,6 @@
 # Opportunity Finder Skill
 
-Opportunity Finder is a Codex/Claude skill for discovering and ranking product or business opportunities from real online discussions.
+Opportunity Finder is an Agent Skill for Codex, Claude, and Gemini CLI that discovers and ranks product or business opportunities from real online discussions.
 
 It fetches posts from Hacker News and Reddit, helps the agent extract pain-point clusters, scores those opportunities with a deterministic 7-factor model, and renders polished opportunity reports.
 
@@ -23,6 +23,7 @@ Example prompts:
 ```text
 .
 |-- SKILL.md
+|-- GEMINI.md
 |-- agents/
 |   `-- openai.yaml
 |-- scripts/
@@ -104,6 +105,26 @@ PDF versions are also included for download/export parity:
 These example deliverables clarify the desired report quality, structure, and level of evidence.
 
 ## Install As A Skill
+
+### Gemini CLI
+
+Gemini CLI can install Agent Skills directly from Git:
+
+```bash
+gemini skills install https://github.com/rawalrahul/opportunity-finder-skill.git --consent
+gemini skills list
+```
+
+For local development:
+
+```bash
+gemini skills link /path/to/opportunity-finder-skill
+/skills reload
+```
+
+This repo also includes `GEMINI.md`, so when opened directly in Gemini CLI it provides project context and points Gemini to the skill workflow.
+
+### Codex / Claude
 
 Copy this folder to your skills directory:
 

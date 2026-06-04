@@ -1,6 +1,6 @@
 ---
 name: opportunity-finder
-description: Use when the user wants to discover, research, or rank business/product opportunities and pain points from real online discussions (Reddit, Hacker News) for a topic, niche, keyword, or community - e.g. "find opportunities in X", "what are people frustrated about in Y", "pain points around Z", market/idea validation from social signal.
+description: Use in Codex, Claude, or Gemini CLI when the user wants to discover, research, or rank business/product opportunities and pain points from real online discussions (Reddit, Hacker News) for a topic, niche, keyword, or community - e.g. "find opportunities in X", "what are people frustrated about in Y", "pain points around Z", market/idea validation from social signal.
 ---
 
 # Opportunity Finder
