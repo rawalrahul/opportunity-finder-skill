@@ -9,7 +9,7 @@ description: Use when the user wants to discover, research, or rank business/pro
 
 Discovers business opportunities by mining real complaints from Reddit + Hacker News, then scoring them with a 7-factor algorithm. Scripts handle deterministic work (fetching, math); **you** (the agent) handle judgment (frustration detection, clustering) - no external LLM API or key needed.
 
-Pipeline: `fetch posts` -> `you extract opportunities` -> `you cluster` -> `score.py ranks` -> present.
+Pipeline: `fetch posts` -> `you extract opportunities` -> `you cluster` -> `score.py ranks` -> `report.py renders` -> present or save.
 
 ## Workflow
 
@@ -53,9 +53,25 @@ python scripts/score.py --in scored_input.json --out ranked.json
 
 `score.py` computes 7 weighted factors (frequency .25, frustration .20, recency .15, platform-diversity .10, engagement .10, competition-gap .10, market-size .10), a `totalScore` (0-100), and a `scoreLabel`. It re-matches each opportunity to related posts to compute frequency/recency/engagement, so always pass the full `posts` array.
 
-### 5. Present
+### 5. Generate a report
 
-Sort is already done (desc by score). For each opportunity show: title, **score + label**, frustration intensity, platforms, top 2-3 quotes with links, existing solutions + weaknesses, suggested approach. Lead with the highest scorers.
+When the user asks for a saved report, PDF, HTML, deliverable, or "these kinds of reports", render the ranked output with:
+
+```bash
+python scripts/report.py --in ranked.json --topic "<topic>" --out report.md
+```
+
+Optional exports:
+
+```bash
+python scripts/report.py --in ranked.json --topic "<topic>" --out report.md --html report.html --pdf report.pdf
+```
+
+PDF export requires Playwright and a local Chromium install. If PDF export is unavailable, save Markdown and/or HTML and state that PDF export could not be generated.
+
+### 6. Present
+
+Sort is already done (desc by score). For each opportunity show: title, **score + label**, frustration intensity, platforms, top 2-3 quotes with links, existing solutions + weaknesses, suggested approach. Lead with the highest scorers. If a report was saved, link or name the saved file path.
 
 ## Score interpretation
 
@@ -70,8 +86,9 @@ Sort is already done (desc by score). For each opportunity show: title, **score 
 
 - **Skipping fetch, inventing posts**: always run `fetch_posts.py`. Opportunities must be grounded in real fetched quotes.
 - **Not passing `posts` to score.py**: frequency/recency/engagement factors need the post array; without it scores collapse.
+- **Not creating a report when requested**: use `report.py` after scoring so the user gets a reusable artifact, not only a chat summary.
 - **Old posts score low on recency** (linear decay to 0 at 90 days) - this is correct; flag genuinely stale topics.
-- **Reddit returns nothing**: rate-limited or query too narrow. Retry with `--source hn` or broaden query; don't fabricate.
+- **Reddit returns nothing**: rate-limited or query too narrow. `fetch_posts.py` falls back to Scrapling + old.reddit when Scrapling is installed; otherwise retry with `--source hn` or broaden query. Don't fabricate.
 
 ## Scope
 
