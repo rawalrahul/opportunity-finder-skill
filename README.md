@@ -22,16 +22,19 @@ Example prompts:
 
 ```text
 .
-├── SKILL.md
-├── agents/
-│   └── openai.yaml
-├── scripts/
-│   ├── fetch_posts.py
-│   ├── score.py
-│   └── report.py
-└── examples/
-    ├── Developer_Tooling_Opportunities.pdf
-    └── IT_Operations_Automation_Opportunities.pdf
+|-- SKILL.md
+|-- agents/
+|   `-- openai.yaml
+|-- scripts/
+|   |-- fetch_posts.py
+|   |-- score.py
+|   `-- report.py
+`-- examples/
+    |-- README.md
+    |-- Developer_Tooling_Opportunities.md
+    |-- Developer_Tooling_Opportunities.pdf
+    |-- IT_Operations_Automation_Opportunities.md
+    `-- IT_Operations_Automation_Opportunities.pdf
 ```
 
 ## Workflow
@@ -87,12 +90,18 @@ python -m pip install scrapling
 
 ## Example Reports
 
-The `examples/` folder contains two PDF reports showing the expected output style:
+The `examples/` folder contains directly viewable Markdown reports plus PDF exports. Start here:
 
-- `Developer_Tooling_Opportunities.pdf`
-- `IT_Operations_Automation_Opportunities.pdf`
+- [Examples index](examples/README.md)
+- [Developer Tooling Opportunities](examples/Developer_Tooling_Opportunities.md)
+- [IT Operations Automation Opportunities](examples/IT_Operations_Automation_Opportunities.md)
 
-These are example deliverables generated from the skill workflow and are included to clarify the desired report quality, structure, and level of evidence.
+PDF versions are also included for download/export parity:
+
+- [Developer_Tooling_Opportunities.pdf](examples/Developer_Tooling_Opportunities.pdf)
+- [IT_Operations_Automation_Opportunities.pdf](examples/IT_Operations_Automation_Opportunities.pdf)
+
+These example deliverables clarify the desired report quality, structure, and level of evidence.
 
 ## Install As A Skill
 
